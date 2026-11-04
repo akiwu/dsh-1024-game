@@ -30,7 +30,7 @@
 github:akiwu/dsh-1024-game
 ```
 
-等价的长写法：`git+https://github.com/akiwu/dsh-1024-game.git`（想锁版本加 `#v0.1.1`）。
+等价的长写法：`git+https://github.com/akiwu/dsh-1024-game.git`（想锁版本加 `#v0.1.2`）。
 
 **方式 2 · 预打包 tarball**（不拉仓库、不需要构建授权，适合网络不稳）：
 
