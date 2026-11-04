@@ -6,19 +6,25 @@
 
 在 **DeepSeek Harness** 的 Web GUI 里直接玩 1024（2048 的 4×4 变体，合成出 1024 即达成）的客户端插件。
 
-左侧栏底部多一个入口；点开是全屏游戏面板，方向键 / WASD 移动，手机上可滑动，进度与最高分存在本地。
+入口在左侧栏的面板列表里、和「插件」并排（`1024 小游戏`）；点进去是一个独立的主面板页面，棋盘、计分和按键说明都在页面里，不再是盖住整个客户端的弹层。
 
-![侧边栏入口](docs/screenshots/launcher.png)
+![面板页](docs/screenshots/panel.png)
 
-![游戏面板](docs/screenshots/game.png)
+![达成 1024](docs/screenshots/win.png)
 
 ## 玩法
 
-- 方向键或 `WASD` 移动；手机在棋盘上滑动；`Esc` 关闭；`⌘/Ctrl + Z` 撤销一步。
-- 同值方块相撞合并，一次移动里每块只合并一次；合并得分累加到分数。
-- 合成出 `1024` 弹结算，可以「继续挑战」更高分；走不动时判定结束。
-- 最高分、当前残局写入 `localStorage`，关掉面板或刷新页面都不丢局。
-- 侧边栏收窄成图标栏时，入口自动变成只带 `1024` 徽标的方形按钮。
+| 按键 | 作用 |
+|---|---|
+| `←` `↑` `→` `↓` | 让所有方块朝该方向滑到底 |
+| `W` `A` `S` `D` | 同上 |
+| `R` | 重新开局 |
+| `⌘ / Ctrl` + `Z` | 撤销一步（最多回退 32 步） |
+| 在棋盘上拖动（触屏/触控板） | 滑动移动 |
+
+规则：两个**同值**方块相撞合并成它们的和并计分，一次移动里每块只合并一次；每走一步随机多出一个 2 或 4；合成出 `1024` 达成，可以「继续挑战」；棋盘塞满且没有可合并的相邻方块时本局结束。
+
+最高分与残局写入 `localStorage`：切到别的面板再回来、刷新页面都不丢局。键盘监听只在这个面板挂载时存在，回到会话后不会抢输入框的按键。
 
 ## 安装（给别人用）
 
@@ -94,10 +100,11 @@ node scripts/screenshot.mjs  # 重新生成 docs/screenshots/*.png
 ## 实现要点
 
 - **两个挂载点**（slot）：
-  - `sidebar.footer.action` —— 左侧栏底部入口按钮，收到宿主给的 `wide`，宽栏显示文字、窄栏只显示徽标。
-  - `shell.overlay` —— 全屏弹层，自带遮罩，未打开时渲染 `null`。
-- 两个 slot 都用 `ctx.slots.inject(name, …)` 等待声明就绪再 `register`，随插件 fiber 卸载自动摘除；样式通过 `ctx.effect` 注入并在卸载时移除。
-- 状态用模块内单例 store + `useSyncExternalStore` 订阅，关闭弹层不丢局；持久化键：`dsh-1024-game/state`、`dsh-1024-game/best`。
+  - `main`（keyed，`key = "1024-game"`）——主面板本体，只有被选中时才挂载，键盘/触摸监听随挂载存亡。
+  - `sidebar.panellist`（list，`id = "1024-game"`）——左侧栏面板列表里的图标入口，与「插件」并列；点击由侧边栏调用 `ctx.layout.selectPanel(id)`。
+- 面板里的「返回会话」调用 `ctx.layout.selectPanel(null)`，不改变当前 Session。
+- 样式通过 `ctx.effect` 注入 `<style>` 并在卸载时移除；配色读 `--dsw-alias-*` 主题变量，浅色/深色主题都跟随。
+- 状态用模块内单例 store + `useSyncExternalStore` 订阅；持久化键：`dsh-1024-game/state`、`dsh-1024-game/best`。
 - 游戏逻辑是纯函数（`slideLine` / `moveBoard` / `spawnTile` / `canPlay` / `applyMove` / `undoMove`），全部有单测；组件只做渲染与事件。
 - 兼容 React 18/19：只用 `createElement` 与 18 起可用的 hooks。
 
@@ -105,7 +112,7 @@ node scripts/screenshot.mjs  # 重新生成 docs/screenshots/*.png
 
 - 只面向 Web 平台（Desktop 内置的也是 Web GUI）；终端 TUI 不显示。
 - 无联网、无宿主工具，纯前端小游戏；不参与 agent 的对话与计费。
-- 全屏弹层打开时会遮住整个 GUI（和设置弹窗同一层），点遮罩或 `Esc` 关闭。
+- 打开游戏面板会替换中间栏的会话视图（和「插件」页一样），会话本身不受影响。
 
 ## License
 

@@ -32,12 +32,13 @@ test("bundle：注册 id 与包名一致，工厂只依赖平台基座里的 rea
 	assert.equal(registration.id, PACKAGE_NAME);
 	assert.deepEqual(requested, ["react"]);
 	assert.equal(typeof exports.apply, "function");
-	assert.deepEqual(plain(exports.inject), ["slots"]);
-	assert.equal(typeof exports.GameFooterButton, "function");
-	assert.equal(typeof exports.GameOverlay, "function");
+	assert.deepEqual(plain(exports.inject), ["slots", "layout"]);
+	assert.equal(exports.PANEL_ID, "1024-game");
+	assert.equal(typeof exports.GamePanel, "function");
+	assert.equal(typeof exports.GamePanelIcon, "function");
 });
 
-test("apply：注入可回收的样式，并向两个挂载点注册", () => {
+test("apply：注入可回收的样式，注册主面板与侧边栏面板入口", () => {
 	const { exports, created } = loadPlugin();
 	const ctx = createClientContext();
 	exports.apply(ctx);
@@ -45,16 +46,18 @@ test("apply：注入可回收的样式，并向两个挂载点注册", () => {
 	const style = created.find((node) => node.tag === "style");
 	assert.ok(style, "没有创建 <style>");
 	assert.equal(style.attributes["data-dsh-1024-game"], "");
-	assert.match(style.textContent, /dsh1024-panel/);
+	assert.match(style.textContent, /dsh1024-page/);
 
 	const names = ctx.registrations.map((entry) => entry.options.name);
-	assert.deepEqual(names, ["sidebar.footer.action", "shell.overlay"]);
-	const footer = ctx.registrations.find((entry) => entry.options.name === "sidebar.footer.action");
-	assert.equal(footer.options.id, "1024-game");
-	assert.equal(typeof footer.component, "function");
-	const overlay = ctx.registrations.find((entry) => entry.options.name === "shell.overlay");
-	assert.equal(overlay.options.id, "1024-game.dialog");
-	assert.equal(typeof overlay.component, "function");
+	assert.deepEqual(names, ["main", "sidebar.panellist"]);
+
+	const panel = ctx.registrations.find((entry) => entry.options.name === "main");
+	assert.equal(panel.options.key, "1024-game");
+	assert.equal(typeof panel.component, "function");
+
+	const entry = ctx.registrations.find((item) => item.options.name === "sidebar.panellist");
+	assert.equal(entry.options.id, "1024-game");
+	assert.equal(typeof entry.component, "function");
 
 	// 插件卸载（fiber 销毁）时样式必须摘掉，避免热重载堆叠。
 	for (const effect of ctx.effects) effect.disposer?.();

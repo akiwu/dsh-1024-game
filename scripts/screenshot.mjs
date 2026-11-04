@@ -50,28 +50,30 @@ const origin = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch();
 const shots = [];
 
-try {
-	const page = await browser.newPage({ viewport: { width: 1180, height: 780 }, deviceScaleFactor: 2 });
-	await page.goto(`${origin}/preview/index.html`);
-	await page.waitForSelector(".dsh1024-footer");
-	await page.screenshot({ path: path.join(project, "docs/screenshots/launcher.png") });
-	shots.push("docs/screenshots/launcher.png");
+const shoot = async (page, name) => {
+	const file = path.join(project, "docs/screenshots", name);
+	await page.screenshot({ path: file });
+	shots.push(`docs/screenshots/${name}`);
+};
 
-	await page.click(".dsh1024-footer");
-	await page.waitForSelector(".dsh1024-panel");
+try {
+	const page = await browser.newPage({ viewport: { width: 1180, height: 820 }, deviceScaleFactor: 2 });
+	await page.goto(`${origin}/preview/index.html`);
+	await page.waitForSelector(".dsh1024-page");
+	await shoot(page, "panel.png");
+
 	for (const key of ["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"]) {
 		await page.keyboard.press(key);
 		await page.waitForTimeout(60);
 	}
 	const tiles = await page.$$eval(".dsh1024-tile", (nodes) => nodes.map((node) => node.textContent));
-	if (tiles.length < 2) throw new Error("棋盘上没有方块，移动事件可能没有生效");
-	const score = await page.$eval(".dsh1024-score strong", (node) => node.textContent);
-	console.log(`棋盘方块 ${tiles.length} 个，第一大项分数 ${score}`);
-	await page.screenshot({ path: path.join(project, "docs/screenshots/game.png") });
-	shots.push("docs/screenshots/game.png");
+	if (tiles.length < 2) throw new Error("棋盘上没有方块，键盘事件可能没有生效");
+	const score = await page.$eval(".dsh1024-stat strong", (node) => node.textContent);
+	console.log(`棋盘方块 ${tiles.length} 个，分数 ${score}`);
+	await shoot(page, "playing.png");
 
 	// 达成 1024 的结算界面：先塞一盘 512+512 的残局，再左移合成。
-	const winPage = await browser.newPage({ viewport: { width: 1180, height: 780 }, deviceScaleFactor: 2 });
+	const winPage = await browser.newPage({ viewport: { width: 1180, height: 820 }, deviceScaleFactor: 2 });
 	await winPage.addInitScript(() => {
 		const board = [512, 512, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		window.localStorage.setItem("dsh-1024-game/state", JSON.stringify({
@@ -85,12 +87,10 @@ try {
 		}));
 	});
 	await winPage.goto(`${origin}/preview/index.html`);
-	await winPage.click(".dsh1024-footer");
-	await winPage.waitForSelector(".dsh1024-panel");
+	await winPage.waitForSelector(".dsh1024-page");
 	await winPage.keyboard.press("ArrowLeft");
 	await winPage.waitForSelector(".dsh1024-banner");
-	await winPage.screenshot({ path: path.join(project, "docs/screenshots/win.png") });
-	shots.push("docs/screenshots/win.png");
+	await shoot(winPage, "win.png");
 } finally {
 	await browser.close();
 	server.close();

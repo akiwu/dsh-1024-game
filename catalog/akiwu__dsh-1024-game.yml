@@ -4,7 +4,7 @@ url: https://github.com/akiwu/dsh-1024-game
 name: akiwu/dsh-1024-game
 category: fun
 description:
-  en: "Play 1024 inside the DeepSeek Harness Web GUI: sidebar launcher, full-screen board, arrow/WASD/swipe, undo and local saves."
-  zh: 在 DeepSeek Harness 的 Web 界面里直接玩 1024：侧边栏入口、全屏棋盘、方向键/WASD/滑动、撤销与本地存档。
+  en: "Play 1024 inside DeepSeek Harness: a sidebar panel entry, a dedicated board panel, arrow/WASD/swipe, undo, R to restart, local saves."
+  zh: 在 DeepSeek Harness 里玩 1024：侧边栏面板入口 + 独立棋盘页面，方向键/WASD/滑动、撤销、R 重开与本地存档。
 icon: https://raw.githubusercontent.com/akiwu/dsh-1024-game/main/assets/icon-180.png
 tarball: https://github.com/akiwu/dsh-1024-game/releases/latest/download/dsh-1024-game.tgz

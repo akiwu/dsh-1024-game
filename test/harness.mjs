@@ -116,6 +116,7 @@ export function createClientContext() {
 		},
 	};
 	ctx.registrations = slots;
+	ctx.layout = { selectPanel() {} };
 	return ctx;
 }
 
