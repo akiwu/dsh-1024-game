@@ -28,6 +28,9 @@
 
 ## 安装（给别人用）
 
+> 给同事的极简版：见 [INSTALL.md](INSTALL.md)（Desktop / 命令行 / 离线 tarball 三种装法 + 排障）。
+
+
 **不需要发布 npm。** DSH 的插件管理器直接从 GitHub 装，Release 里还有预打包 tarball；收录进市场后更是点一下就行。按省事程度排：
 
 **方式 1 · 一行 spec（现在就能用）**，粘到 DSH 插件页的安装入口 / `dsh plugin add` / agent 的 `plugin_manager.install_bundle`：

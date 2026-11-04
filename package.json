@@ -37,7 +37,8 @@
     "README.md",
     "LICENSE",
     "assets",
-    "docs/screenshots"
+    "docs/screenshots",
+    "INSTALL.md"
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs",
