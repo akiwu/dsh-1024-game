@@ -1,0 +1,49 @@
+name: release
+
+# 发布一个 tag 时自动打包并挂到对应 Release：
+# 版本化文件名 + 稳定名 dsh-1024-game.tgz（市场条目用的是 stable 名，
+# 这样 releases/latest/download/dsh-1024-game.tgz 永远指向最新版）。
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    env:
+      # 配了仓库 secret NPM_TOKEN 才发 npm；没配就只发 Release，谁都不影响。
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test
+        run: npm test
+
+      - name: Pack
+        run: npm pack
+
+      - name: Publish to npm (optional)
+        if: env.NPM_TOKEN != ''
+        run: |
+          printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$RUNNER_TEMP/npmrc"
+          npm publish --registry=https://registry.npmjs.org/ --userconfig "$RUNNER_TEMP/npmrc"
+
+      - name: Attach tarballs to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSIONED="$(ls dsh-1024-game-*.tgz)"
+          cp "$VERSIONED" dsh-1024-game.tgz
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 \
+            || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+          gh release upload "$GITHUB_REF_NAME" "$VERSIONED" --clobber
+          gh release upload "$GITHUB_REF_NAME" dsh-1024-game.tgz --clobber
