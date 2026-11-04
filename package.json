@@ -1,6 +1,6 @@
 {
   "name": "dsh-1024-game",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "在 DeepSeek Harness Web GUI 里玩 1024：侧边栏入口 + 全屏游戏面板，方向键/WASD/滑动操作，本地保存最高分与进度。",
   "keywords": [
     "deepseek",
