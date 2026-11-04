@@ -86,15 +86,16 @@ function PreviewFrame() {
 		},
 	},
 	h("div", { style: { fontSize: 11.5, opacity: 0.45, padding: "0 10px 8px", letterSpacing: ".4px" } }, "今天"),
-	["重构登录流程", "整理发布检查清单", "写 1024 插件"].map((title) =>
+	["重构登录流程", "整理发布检查清单"].map((title) =>
 		h(SidebarRow, {
 			key: title,
 			icon: h("span", { style: { display: "inline-block", width: 16, height: 16, borderRadius: 4, background: "currentColor", opacity: 0.25 } }),
 			label: title,
-			active: title === "写 1024 插件",
+			active: false,
 		})),
 	h("div", { style: { flex: 1 } }),
 	h("div", { style: { height: 1, background: "rgba(255,255,255,.07)", margin: "8px 4px" } }),
+	// 下面两行是「面板列表」：插件页与我们的游戏入口并列
 	h(SidebarRow, { icon: h(PluginsGlyph, {}), label: "插件" }),
 	h(SidebarRow, { icon: h(PanelIcon, { size: 16, active: true }), label: "1024 小游戏", active: true }),
 	h("div", { style: { padding: "10px 10px 0", fontSize: 12.5, color: "#8f8c87" } }, "设置")),
