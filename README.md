@@ -20,11 +20,25 @@
 
 插件是标准 DSH bundle：`package.json` 里同时声明宿主半包（`main`）与浏览器半包（`dsh.client` + `exports["./client"]`），`cordis.patch.yml` 插入一行 Loader row。
 
-在本机开发时，用插件管理器的「本地路径安装」即可（DSH 会 `link:` 到本目录，改完代码重启/热更新即生效）：
+从 GitHub 安装（推荐）：
 
-```bash
-# 在 DSH 里通过插件页安装，或让 agent 调用 plugin_manager：
-#   install_bundle { target: "/Users/akiko/Akiko/DeepSeek1024" }
+```
+git+https://github.com/akiwu/dsh-1024-game.git
+```
+
+也接受 pnpm/npm 的简写：`github:akiwu/dsh-1024-game`。
+
+在 DSH 里三种装法任选：
+
+- 插件页的安装入口粘贴上面的 spec；
+- 命令行 `dsh plugin add "git+https://github.com/akiwu/dsh-1024-game.git"`；
+- 直接让 agent 调用 `plugin_manager` 的 `install_bundle`，`target` 填上面的 spec。
+
+本机开发时用「本地路径安装」，DSH 会 `link:` 到项目目录，改完代码重新加载即生效：
+
+```
+# target 填项目的绝对路径，例如
+plugin_manager install_bundle { target: "/path/to/DeepSeek1024" }
 ```
 
 **安装/升级后需要重启一次 DSH**（宿主 Loader 的包解析在启动时定型），重启后侧边栏底部出现「1024 小游戏」。
