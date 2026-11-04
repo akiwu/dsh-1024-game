@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icon.png" width="96" alt="dsh-1024-game icon" />
+</p>
+
 # dsh-1024-game
 
 在 **DeepSeek Harness** 的 Web GUI 里直接玩 1024（2048 的 4×4 变体，合成出 1024 即达成）的客户端插件。
@@ -28,6 +32,12 @@ git+https://github.com/akiwu/dsh-1024-game.git
 
 也接受 pnpm/npm 的简写：`github:akiwu/dsh-1024-game`。
 
+不想走 git 的话，用 Release 里预打包的 tarball（免掉构建授权那一步）：
+
+```
+https://github.com/akiwu/dsh-1024-game/releases/latest/download/dsh-1024-game.tgz
+```
+
 在 DSH 里三种装法任选：
 
 - 插件页的安装入口粘贴上面的 spec；
@@ -44,6 +54,16 @@ plugin_manager install_bundle { target: "/path/to/DeepSeek1024" }
 **安装/升级后需要重启一次 DSH**（宿主 Loader 的包解析在启动时定型），重启后侧边栏底部出现「1024 小游戏」。
 
 卸载：插件页停用并移除 `dsh-1024-game`，或从 profile 的 `package.json` 中删掉该依赖与 `dsh.profile.bundles` 里的条目。
+
+
+## 插件市场
+
+DSH 没有内置的官方市场：Discover 页读的是**你自己添加的索引 URL**（格式 1 的 JSON）。社区里最常用的两个是：
+
+- [dsh-market](https://github.com/dsh-market/dsh-market)（[dshmarket.com](https://dshmarket.com)，10k+ stars）——装进 DSH 后是 Plugins 页上的一个 tab，目录来自下面的 awesome 列表；它同时把整份目录发布成索引：在 **Plugins → Discover → Index sources** 添加 `https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json` 就能被原生 Discover 搜到。
+- [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)（22k+ stars）——社区插件登记处，`data/plugins/<owner>__<repo>.yml` 一个插件一个文件，提 PR 合并后站点与 dsh-market 通常一天内自动收录。
+
+本仓库的收录材料已准备好：`catalog/akiwu__dsh-1024-game.yml`（分类 `fun`，带图标）。按登记处规则，仓库需创建满 1 天后才接受 PR，所以上游 PR 在创建次日提交。
 
 ## 目录结构
 
