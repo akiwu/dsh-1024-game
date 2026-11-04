@@ -1,3 +1,5 @@
 node_modules/
 preview/bundle.js
 .DS_Store
+
+*.tgz
