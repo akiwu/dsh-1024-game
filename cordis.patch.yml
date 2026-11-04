@@ -1,0 +1,8 @@
+# dsh-1024-game bundle patch: one Loader row mounts both halves of the package.
+# The row name resolves from the profile's own node_modules, where
+# `dsh plugin add <path>` / the Plugins page installed this package.
+# 本包同时提供宿主半包（lib/index.js，空 apply）与浏览器半包
+# （lib/client.js，经 package.json 的 dsh.client 声明由 /plugins 路由下发）。
+- insert:
+    - id: ui-1024-game
+      name: dsh-1024-game
